@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="catalog" type="catalogType"/>
+  <xs:complexType name="catalogType">
+    <xs:sequence>
+      <xs:element type="bookType" name="book" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="bookType">
+    <xs:sequence>
+      <xs:element name="author" type="xs:string"/>
+      <xs:element name="title" type="xs:string"/>
+      <xs:element name="genre">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Computer"/>
+            <xs:enumeration value="Fantasy"/>
+            <xs:enumeration value="Romance"/>
+            <xs:enumeration value="Horror"/>
+            <xs:enumeration value="Science Fiction"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="price" type="xs:float"/>
+      <xs:element name="publish_date" type="xs:date"/>
+      <xs:element name="description" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="id" use="optional"/>
+  </xs:complexType>
+</xs:schema>
