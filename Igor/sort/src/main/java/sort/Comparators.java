@@ -16,18 +16,29 @@ public class Comparators {
         if ('i' == flag) {
             cmp = getInsensitive();
         }
-        else {
-            cmp = getUsual();
+    }
 
-        }
+    Comparators() {
+        cmp = getUsual();
     }
 
     private Comparator<String> getInsensitive() {
         return new Comparator<String>() {
             public int compare(String o1, String o2) {
-                String s1 = o1.toLowerCase();
-                String s2 = o2.toLowerCase();
-                return compare(s1, s2);
+                int n = (o1.length() > o2.length()) ? o2.length() : o1.length();
+                int res = 0;
+                for (int i = 0; i < n; i++) {
+                    res = Character.toLowerCase(o1.charAt(i)) - Character.toLowerCase(o2.charAt(i));
+                    if (res != 0) {
+                        return res;
+                    }
+                }
+                if (o1.length() < o2.length())
+                    return -1;
+                if (o2.length() < o1.length())
+                    return 1;
+                return 0;
+
             }
         };
     }
@@ -35,23 +46,21 @@ public class Comparators {
     private Comparator<String> getUsual() {
         return new Comparator<String>() {
             public int compare(String o1, String o2) {
-                return compare(o1, o2);
+                int n = (o1.length() > o2.length()) ? o2.length() : o1.length();
+                int res = 0;
+                for (int i = 0; i < n; i++) {
+                    res = o1.charAt(i) - o2.charAt(i);
+                    if (res != 0) {
+                        return res;
+                    }
+                }
+                if (o1.length() < o2.length())
+                    return -1;
+                if (o2.length() < o1.length())
+                    return 1;
+                return 0;
             }
         };
     }
 
-    private int compare(String s1, String s2) {
-        int n = (s1.length() > s2.length()) ? s2.length() : s1.length();
-        int res = 0;
-        for (int i = 0; i < n; i++) {
-            res = s2.charAt(i) - s1.charAt(i);
-            if (res != 0) {
-                return res;
-            }
-        }
-        if (s2.length() < s1.length())
-            return 1;
-        else
-            return -1;
-    }
 }

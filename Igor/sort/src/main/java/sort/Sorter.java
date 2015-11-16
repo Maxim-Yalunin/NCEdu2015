@@ -1,4 +1,5 @@
 package sort;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -21,25 +22,30 @@ public class Sorter {
     public String[] sort() throws InterruptedException {
         int size = data.length;
         if (size > threadsCount) {
-            int step = size / threadsCount;
-            MyThread[] threads = new MyThread[threadsCount];
-            List<String[]> arrays = new LinkedList<String[]>();
-            for (int i = 0; i < threadsCount; i++) {
-                int begin = i * step;
-                int end = (i == threadsCount - 1) ? size - 1 : (i + 1) * step - 1;
-                String[] array = Arrays.copyOfRange(data, begin, end);
-                arrays.add(array);
-                MyThread thread = new MyThread(array);
-                thread.run();
-                threads[i] = thread;
-            }
-            for (MyThread thread : threads) {
-                thread.join();
-            }
-            return merge(arrays);
+            return merge(divideAndSort());
         }
         Arrays.sort(data, cmp);
         return data;
+    }
+
+    public List<String[]> divideAndSort() throws InterruptedException {
+        int size = data.length;
+        int step = size / threadsCount;
+        MyThread[] threads = new MyThread[threadsCount];
+        List<String[]> arrays = new LinkedList<String[]>();
+        for (int i = 0; i < threadsCount; i++) {
+            int begin = i * step;
+            int end = (i == threadsCount - 1) ? size - 1 : (i + 1) * step - 1;
+            String[] array = Arrays.copyOfRange(data, begin, end + 1);
+            arrays.add(array);
+            MyThread thread = new MyThread(array);
+            thread.run();
+            threads[i] = thread;
+        }
+        for (MyThread thread : threads) {
+            thread.join();
+        }
+        return arrays;
     }
 
     class MyThread extends Thread {
@@ -56,7 +62,7 @@ public class Sorter {
         }
     }
 
-    private String[] merge(List<String[]> arrays) throws InterruptedException {
+    public String[] merge(List<String[]> arrays) throws InterruptedException {
         if (arrays.size() == 1) {
             return arrays.get(0);
         }
@@ -67,30 +73,29 @@ public class Sorter {
         return arrays.get(0);
     }
 
-    private List<String[]> mergeInList(List<String[]> arrays) throws InterruptedException {
+    public List<String[]> mergeInList(List<String[]> arrays) throws InterruptedException {
         List<String[]> res = new LinkedList<String[]>();
-        List<ArraysMerger> threads = new LinkedList<ArraysMerger>();
-        int index = 0;
-        while (index < arrays.size()) {
-            if ((index + 1) < arrays.size()) {
-                String[] array1 = arrays.get(index);
-                String[] array2 = arrays.get(index + 1);
-                String[] added = new String[array1.length + array2.length];
-                res.add(added);
-                threads.add(new ArraysMerger(array1, array2, added));
-            } else {
-                res.add(arrays.get(index));
-                break;
-            }
-            ++index;
+        int countMergers = arrays.size() / 2;
+        ArraysMerger[] mergers = new ArraysMerger[countMergers];
+        if ((arrays.size() % 2) > 0) {
+            res.add(arrays.get(arrays.size() - 1));
         }
-        for (ArraysMerger merger : threads) {
+        for (int i = 0; i < countMergers; ++i) {
+            String[] array1 = arrays.get(i);
+            String[] array2 = arrays.get(countMergers * 2 - 1 - i);
+            String[] added = new String[array1.length + array2.length];
+            ArraysMerger merger = new ArraysMerger(array1, array2, added);
+            merger.run();
+            mergers[i] = merger;
+            res.add(added);
+        }
+        for (ArraysMerger merger : mergers) {
             merger.join();
         }
         return res;
     }
 
-    private class ArraysMerger extends Thread {
+    public class ArraysMerger extends Thread {
         private String[] result;
         private String[] array1;
         private String[] array2;
@@ -108,7 +113,7 @@ public class Sorter {
         }
     }
 
-    private void mergeTwoArrays(String[] array1, String[] array2, String[] result) {
+    public void mergeTwoArrays(String[] array1, String[] array2, String[] result) {
         int pos1 = 0;
         int pos2 = 0;
         int length1 = array1.length;

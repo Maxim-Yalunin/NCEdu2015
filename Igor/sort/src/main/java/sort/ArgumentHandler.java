@@ -10,7 +10,7 @@ public class ArgumentHandler {
     private Option register;
     private Option unique;
     private Option threads;
-    private Option output;
+    private Option inputOutput;
     private Option in;
 
     ArgumentHandler() {
@@ -24,18 +24,11 @@ public class ArgumentHandler {
 
         threads = new Option("t", true, "threads count");
         threads.setArgs(1);
-        threads.setOptionalArg(true);
         flags.addOption(threads);
 
-        output = new Option("o", true, "output file");
-        output.setArgs(1);
-        output.setOptionalArg(true);
-        flags.addOption(output);
-
-        in = new Option(" ", true, "input file");
-        output.setArgs(1);
-        output.setOptionalArg(true);
-        flags.addOption(output);
+        inputOutput = new Option("o", true, "inputOutput files");
+        inputOutput.setArgs(2);
+        flags.addOption(inputOutput);
     }
 
     public CommandLine getCommandLine(String[] args) throws ParseException {

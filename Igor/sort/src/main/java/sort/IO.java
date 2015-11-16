@@ -8,12 +8,12 @@ import java.util.List;
  * Created by igoryan on 14.11.15.
  */
 public class IO {
-    public static String[] readLines(InputStream in) {
+    public static String[] readLines(InputStream in) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
         return fromReader(bufferedReader);
     }
 
-    private static String[] fromReader(BufferedReader bufferedReader) {
+    private static String[] fromReader(BufferedReader bufferedReader) throws IOException {
         List<String> lines = new ArrayList<String>();
         String line = null;
         try {
@@ -28,11 +28,13 @@ public class IO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        bufferedReader.close();
         return lines.toArray(new String[lines.size()]);
     }
     public static void write(OutputStream out, String[] array) {
         PrintWriter writer = new PrintWriter(out);
         for (int i = 0; i < array.length; ++i)
             writer.println(array[i]);
+        writer.close();
     }
 }

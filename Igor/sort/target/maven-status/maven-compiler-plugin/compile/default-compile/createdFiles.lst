@@ -1,2 +1,9 @@
+sort/Sorter$MyThread.class
+sort/Comparators$2.class
+sort/Sorter$ArraysMerger.class
 sort/App.class
 sort/ArgumentHandler.class
+sort/Comparators$1.class
+sort/IO.class
+sort/Comparators.class
+sort/Sorter.class
