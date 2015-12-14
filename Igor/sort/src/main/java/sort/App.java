@@ -4,36 +4,37 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 
 import java.io.*;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Hello world!
  */
 public class App {
-    private static CommandLine CML;
-    private static InputStream INPUT;
-    private static OutputStream OUTPUT;
-    private static Comparator<String> CMP;
-    private static int THREADS_COUNT = 4;
-    private static String[] ARRAY;
-    private static String[] ARGS;
+    private static CommandLine cml;
+    private static InputStream input;
+    private static OutputStream output;
+    private static Comparator<String> cmp;
+    private static int threads_count = 4;
+    private static String[] array;
+    private static String[] args;
 
     public static void main(String[] args) {
-        ARGS = args;
+        App.args = args;
         ArgumentHandler arguments = new ArgumentHandler();
         try {
-            CML = arguments.getCommandLine(args);
+            cml = arguments.getCommandLine(args);
             // parsing arguments
             setInput();
             setOutput();
             setComparator();
             setThreadsCount();
-            ARRAY = IO.readLines(INPUT);
-            Sorter sorter = new Sorter(THREADS_COUNT, CMP, ARRAY);
-            ARRAY = sorter.sort();
-            IO.write(OUTPUT, ARRAY);
+            array = IO.readLines(input);
+            input.close();
+            checkUniqueFlag();
+            Sorter sorter = new Sorter(threads_count, cmp, array);
+            array = sorter.sort();
+            IO.write(output, array);
+            output.close();
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -47,43 +48,48 @@ public class App {
     }
 
     public static void setInput() throws FileNotFoundException {
-        if (CML.hasOption('o')) {
-            INPUT = new FileInputStream(CML.getOptionValues('o')[1]);
+        if (cml.hasOption('o')) {
+            input = new FileInputStream(cml.getOptionValues('o')[1]);
         } else {
-            INPUT = System.in;
+            input = System.in;
         }
     }
 
     public static void setOutput() throws FileNotFoundException {
-        if (CML.hasOption('o')) {
-            OUTPUT = new FileOutputStream(CML.getOptionValues('o')[0]);
+        if (cml.hasOption('o')) {
+            output = new FileOutputStream(cml.getOptionValues('o')[0]);
         } else {
-            OUTPUT = System.out;
+            output = System.out;
         }
     }
 
     public static void setComparator() {
-        if (CML.hasOption('i')) {
-            CMP = new Comparators('i').getCmp();
+        if (cml.hasOption('i')) {
+            cmp = new Comparators('i').getCmp();
         } else {
-            CMP = new Comparators().getCmp();
+            cmp = new Comparators().getCmp();
         }
     }
 
     public static void setThreadsCount() {
-        if (CML.hasOption('t')) {
-            THREADS_COUNT = Integer.parseInt(CML.getOptionValue('t'));
+        if (cml.hasOption('t')) {
+            threads_count = Integer.parseInt(cml.getOptionValue('t'));
         }
     }
 
     public static void checkUniqueFlag() {
-        if (CML.hasOption('u')) {
-            ARRAY = unique(ARRAY);
+        if (cml.hasOption('u')) {
+            if (cml.hasOption('i')) {
+                array = unique(array, Comparators.getInsensitive());
+            }
+            else {
+                array = unique(array, Comparators.getUsual());
+            }
         }
     }
 
-    public static String[] unique(String[] array) {
-        Set<String> set = new HashSet<String>();
+    public static String[] unique(String[] array, Comparator<String> cmp) {
+        Set<String> set = new TreeSet<String>(cmp);
         for (int i = 0; i < array.length; ++i) {
             set.add(array[i]);
         }
@@ -91,30 +97,30 @@ public class App {
     }
 
     public static CommandLine getCML() {
-        return CML;
+        return cml;
     }
 
-    public static OutputStream getOUTPUT() {
-        return OUTPUT;
+    public static OutputStream getOutput() {
+        return output;
     }
 
-    public static InputStream getINPUT() {
-        return INPUT;
+    public static InputStream getInput() {
+        return input;
     }
 
-    public static Comparator<String> getCMP() {
-        return CMP;
+    public static Comparator<String> getCmp() {
+        return cmp;
     }
 
-    public static int getThreadsCount() {
-        return THREADS_COUNT;
+    public static int getThreads_count() {
+        return threads_count;
     }
 
-    public static String[] getARRAY() {
-        return ARRAY;
+    public static String[] getArray() {
+        return array;
     }
 
     public static void setCML(CommandLine CML) {
-        App.CML = CML;
+        App.cml = CML;
     }
 }

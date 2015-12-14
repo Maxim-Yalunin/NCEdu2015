@@ -22,43 +22,18 @@ public class Comparators {
         cmp = getUsual();
     }
 
-    private Comparator<String> getInsensitive() {
+    public static Comparator<String> getInsensitive() {
         return new Comparator<String>() {
             public int compare(String o1, String o2) {
-                int n = (o1.length() > o2.length()) ? o2.length() : o1.length();
-                int res = 0;
-                for (int i = 0; i < n; i++) {
-                    res = Character.toLowerCase(o1.charAt(i)) - Character.toLowerCase(o2.charAt(i));
-                    if (res != 0) {
-                        return res;
-                    }
-                }
-                if (o1.length() < o2.length())
-                    return -1;
-                if (o2.length() < o1.length())
-                    return 1;
-                return 0;
-
+                return o1.compareToIgnoreCase(o2);
             }
         };
     }
 
-    private Comparator<String> getUsual() {
+    public static Comparator<String> getUsual() {
         return new Comparator<String>() {
             public int compare(String o1, String o2) {
-                int n = (o1.length() > o2.length()) ? o2.length() : o1.length();
-                int res = 0;
-                for (int i = 0; i < n; i++) {
-                    res = o1.charAt(i) - o2.charAt(i);
-                    if (res != 0) {
-                        return res;
-                    }
-                }
-                if (o1.length() < o2.length())
-                    return -1;
-                if (o2.length() < o1.length())
-                    return 1;
-                return 0;
+                return o1.compareTo(o2);
             }
         };
     }
