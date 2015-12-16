@@ -1,8 +1,7 @@
-package StringSort;
 
 import java.util.*;
 
-class Sorter extends Thread {// ласс, сортирующий то, что считал Reader
+class Sorter extends Thread {//  ласс, сортирующий то, что считал Reader
 
     private Reader reader;// –идер, к которому прив€зан данный сортировщик
     public List<String> innerList;// ¬нутренний лист, куда копируютс€ слова из
@@ -11,9 +10,10 @@ class Sorter extends Thread {// ласс, сортирующий то, что считал Reader
     private boolean PARAMETER_I;
     private boolean isWorking;// работает или ожидает пр€мо сейчас
     private static int DELAY = 100;// ¬рем€ ожидани€ в случае нулевого размера
-				   // внутреннего списка работающего ридера.
-				   // [ms]
+    // внутреннего списка работающего ридера.
+    // [ms]
     private boolean hasEnded = false;// «авершил ли работу полностью. ѕосле
+
     // ожидани€ работа может продолжитьс€,
     // после того, как this.hasEnded=true -
     // нет.
@@ -22,7 +22,7 @@ class Sorter extends Thread {// ласс, сортирующий то, что считал Reader
 	return isWorking;
     }
 
-    public boolean hasEnded() {
+    public boolean hasEnded() {// 1 из 2-х!
 	return hasEnded;
     }
 
@@ -37,18 +37,18 @@ class Sorter extends Thread {// ласс, сортирующий то, что считал Reader
     /**
      * ‘ункци€ удал€ет из внутреннего списка сортировщика неуникальные строки.
      */
-    public void deleteDoubledFromSublist() {
-	for (int i = 0; i < (innerList.size() - 1); i++) {
-	    if ((PARAMETER_I == true) && (innerList.get(i).compareToIgnoreCase(innerList.get(i + 1)) == 0)) {
-		innerList.remove(i + 1);
-		i -= 1;
-	    }
-	    if ((PARAMETER_I == false) && (innerList.get(i).compareTo(innerList.get(i + 1)) == 0)) {
-		innerList.remove(i + 1);
-		i -= 1;
-	    }
-	}
-    }
+  //  public void deleteDoubledFromSublist() {
+//	for (int i = 0; i < (innerList.size() - 1); i++) {
+//	    if ((PARAMETER_I == true) && (innerList.get(i).compareToIgnoreCase(innerList.get(i + 1)) == 0)) {
+//		innerList.remove(i + 1);
+//		i -= 1;
+//	    }
+//	    if ((PARAMETER_I == false) && (innerList.get(i).compareTo(innerList.get(i + 1)) == 0)) {
+//		innerList.remove(i + 1);
+//		i -= 1;
+//	    }
+//	}
+//    }
 
     @Override
     public void run() {
@@ -58,8 +58,7 @@ class Sorter extends Thread {// ласс, сортирующий то, что считал Reader
 	    isWorking = false;
 	    hasEnded = true;
 	}
-	// цикл, в котором сортировщик забирает слова из внутреннего списка
-	// ридера.
+	// цикл, в котором сортировщик забирает слова из внутреннего списка ридера.
 	while (true) {
 	    if (reader.words.size() > 0) {
 		try {
@@ -77,24 +76,22 @@ class Sorter extends Thread {// ласс, сортирующий то, что считал Reader
 		if (!reader.hasNoMoreWords()) {
 		    isWorking = false;
 		    try {
-			Thread.sleep(DELAY);// ≈сли ридер ещЄ работает, но слов
-					    // в
-					    // его списке пока нет. ћожет
-					    // случитьс€, если будет создано
-					    // слишком большое количество
-					    // сортировщиков.
-					    // ѕо-хорошему в таком случае лишние
-					    // сортировщики нужно удал€ть, но
-					    // мне
-					    // пока что было лень продумывать
-					    // логику.
+			Thread.sleep(DELAY);
+			// ≈сли ридер ещЄ работает, но слов в
+			// его списке нет. ћожет
+			// случитьс€, если будет создано
+			// слишком большое количество сортировщиков.
+			// ѕо-хорошему в таком случае лишние
+			// сортировщики нужно удал€ть, но мне
+			// пока что было лень продумывать логику.
 		    } catch (InterruptedException e) {
-			System.out.println("No rest for the wicked");
+			e.printStackTrace();
 		    }
 		} else {
-		    Collections.sort(innerList, new SimpleComparator(PARAMETER_I));
+		    SimpleComparator sc = new SimpleComparator(PARAMETER_I);
+		    Collections.sort(innerList, sc);
 		    if (PARAMETER_U == true) {
-			deleteDoubledFromSublist();
+			sc.deleteDoubledFromList(innerList);
 		    }
 		    isWorking = false;
 		    hasEnded = true;
