@@ -39,7 +39,7 @@ public class Sorter {
             String[] array = Arrays.copyOfRange(data, begin, end + 1);
             arrays.add(array);
             MyThread thread = new MyThread(array);
-            thread.run();
+            thread.start();
             threads[i] = thread;
         }
         for (MyThread thread : threads) {
@@ -85,7 +85,7 @@ public class Sorter {
             String[] array2 = arrays.get(countMergers * 2 - 1 - i);
             String[] added = new String[array1.length + array2.length];
             ArraysMerger merger = new ArraysMerger(array1, array2, added);
-            merger.run();
+            merger.start();
             mergers[i] = merger;
             res.add(added);
         }
